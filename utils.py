@@ -140,49 +140,49 @@ class Yaml:
             config = yaml.safe_load(f)
         return config
 
-    def csi_yaml(self,linstor_cip):
-        list = []
-        with open('./linstor.yaml') as f:
-            config = yaml.load_all(f.read(),Loader=yaml.FullLoader)
-        for i in config:
-            list.append(i)
-            # if i['kind'] == "DaemonSet":
-            #     i['spec']['template']['spec']['containers'][1]['env'][2]['value'] = "http://10.203.1.68:3370"
-            # elif i['kind'] == "StatefulSet":
-            #     i['spec']['template']['spec']['containers'][4]['env'][2]['value'] = "http://10.203.1.68:3370"
+    # def csi_yaml(self,linstor_cip):
+    #     list = []
+    #     with open('./linstor.yaml') as f:
+    #         config = yaml.load_all(f.read(),Loader=yaml.FullLoader)
+    #     for i in config:
+    #         list.append(i)
+    #         # if i['kind'] == "DaemonSet":
+    #         #     i['spec']['template']['spec']['containers'][1]['env'][2]['value'] = "http://10.203.1.68:3370"
+    #         # elif i['kind'] == "StatefulSet":
+    #         #     i['spec']['template']['spec']['containers'][4]['env'][2]['value'] = "http://10.203.1.68:3370"
+    #
+    #     list[0]['spec']['template']['spec']['containers'][4]['env'][2]['value'] = f"http://{linstor_cip}:3370"
+    #     list[8]['spec']['template']['spec']['containers'][1]['env'][2]['value'] = f"http://{linstor_cip}:3370"
+    #     with open('./linstor.yaml', "w", encoding="utf-8") as f:
+    #         yaml.dump_all(list, f)
+    #     return config
 
-        list[0]['spec']['template']['spec']['containers'][4]['env'][2]['value'] = f"http://{linstor_cip}:3370"
-        list[8]['spec']['template']['spec']['containers'][1]['env'][2]['value'] = f"http://{linstor_cip}:3370"
-        with open('./linstor.yaml', "w", encoding="utf-8") as f:
-            yaml.dump_all(list, f)
-        return config
-
-    def linstorip_yaml(self):
-        try:
-            with open('./ksapi.yaml') as f:
-                config = yaml.load(f.read(),Loader=yaml.FullLoader)
-        except:
-            print("获取ksapi.yaml失败！")
-            sys.exit()
-
-        flag1 = False
-        for i in config['spec']['template']['spec']['containers'][0]['volumeMounts']:
-            if i['name'] == 'linstorip':
-                print("linstorip键值对存在1")
-                flag1 = True
-        if not flag1:
-            config['spec']['template']['spec']['containers'][0]['volumeMounts'].append(
-                {'mountPath': '/etc/linstorip', 'name': 'linstorip'})
-
-        flag2 = False
-        for i in config['spec']['template']['spec']['volumes']:
-            if i['name'] == 'linstorip':
-                print("linstorip键值对存在2")
-                flag2 = True
-        if not flag2:
-            config['spec']['template']['spec']['volumes'].append(
-                {'configMap': {'defaultMode': 420, 'name': 'linstorip'}, 'name': 'linstorip'})
-
-        with open('./ksapi.yaml', "w", encoding="utf-8") as f:
-            yaml.dump(config, f)
-        return config
+    # def linstorip_yaml(self):
+    #     try:
+    #         with open('./ksapi.yaml') as f:
+    #             config = yaml.load(f.read(),Loader=yaml.FullLoader)
+    #     except:
+    #         print("获取ksapi.yaml失败！")
+    #         sys.exit()
+    #
+    #     flag1 = False
+    #     for i in config['spec']['template']['spec']['containers'][0]['volumeMounts']:
+    #         if i['name'] == 'linstorip':
+    #             print("linstorip键值对存在1")
+    #             flag1 = True
+    #     if not flag1:
+    #         config['spec']['template']['spec']['containers'][0]['volumeMounts'].append(
+    #             {'mountPath': '/etc/linstorip', 'name': 'linstorip'})
+    #
+    #     flag2 = False
+    #     for i in config['spec']['template']['spec']['volumes']:
+    #         if i['name'] == 'linstorip':
+    #             print("linstorip键值对存在2")
+    #             flag2 = True
+    #     if not flag2:
+    #         config['spec']['template']['spec']['volumes'].append(
+    #             {'configMap': {'defaultMode': 420, 'name': 'linstorip'}, 'name': 'linstorip'})
+    #
+    #     with open('./ksapi.yaml', "w", encoding="utf-8") as f:
+    #         yaml.dump(config, f)
+    #     return config

@@ -9,19 +9,22 @@ class UpdateConsoleAndServer():
         self.obj_ssh = utils.SSHconn(host=self.yaml_info['node_info']['ip']
                                      ,password=self.yaml_info['node_info']['password'])
 
-    def set_linstor_csi(self):
-        print("应用linstor CSI......")
-        self.obj_yaml.csi_yaml(self.yaml_info["LINSTOR Controller IP"])
-        utils.exec_cmd('kubectl apply -f linstor.yaml',self.obj_ssh)
-        time.sleep(5)
+    # def set_linstor_csi(self):
+    #     print("应用linstor CSI......")
+    #     self.obj_yaml.csi_yaml(self.yaml_info["LINSTOR Controller IP"])
+    #     utils.exec_cmd('kubectl apply -f linstor.yaml',self.obj_ssh)
+    #     time.sleep(5)
 
     def change_linstorip(self):
         print("获取ksapi.yaml......")
         utils.exec_cmd("kubectl get deployment.apps/ks-apiserver -n kubesphere-system -o yaml > ksapi.yaml",self.obj_ssh)
-        # utils.exec_cmd("sudo chmod -R 777 /root")
-        time.sleep(5)
         print("更改ksapi.yaml......")
-        self.obj_yaml.linstorip_yaml()
+        utils.exec_cmd("sed -i '96 a \        - mountPath: /etc/linstorip' ksapi.yaml",self.obj_ssh)
+        utils.exec_cmd("sed -i '97 a \          name: linstorip' ksapi.yaml",self.obj_ssh)
+        utils.exec_cmd("sed -i '119 a \      - configMap:' ksapi.yaml",self.obj_ssh)
+        utils.exec_cmd("sed -i '120 a \          defaultMode: 420' ksapi.yaml",self.obj_ssh)
+        utils.exec_cmd("sed -i '121 a \          name: linstorip' ksapi.yaml",self.obj_ssh)
+        utils.exec_cmd("sed -i '122 a \        name: linstorip' ksapi.yaml",self.obj_ssh)
         print("应用ksapi.yaml......")
         utils.exec_cmd("kubectl apply -f ksapi.yaml",self.obj_ssh)
         time.sleep(5)
@@ -41,7 +44,7 @@ class UpdateConsoleAndServer():
     def change_configmap(self):
         print("创建configmap")
         change_configmap_cmd = f'kubectl create configmap linstorip -n kubesphere-system --from-literal=user=admin --from-literal=linstorip={self.yaml_info["node_info"]["ip"]}:3370'
-        utils.exec_cmd(change_configmap_cmd)
+        utils.exec_cmd(change_configmap_cmd,self.obj_ssh)
         time.sleep(5)
 
     def wait_for_pods(self):
