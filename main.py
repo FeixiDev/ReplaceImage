@@ -16,11 +16,21 @@ class argparse_operator:
                                  help='Show current version',
                                  action='store_true')
 
-        parser_test = sub_parser.add_parser("update", aliases=['u'], help='update CoSAN Manager console and server')
+        parser_test = sub_parser.add_parser("update", aliases=['u'], help='Update CoSAN Manager console and server')
+
+        parser_arm = sub_parser.add_parser("arm", aliases=['a'], help='Update ARM image')
+        parser_arm.add_argument('-pull',
+                                 dest='pull',
+                                 help='Use feixitek warehouse',
+                                 action='store_true')
+
 
         self.parser.set_defaults(func=self.main_usage)
 
         parser_test.set_defaults(func=self.test_operation)
+
+        parser_arm.set_defaults(func=self.arm_operation)
+
 
 
     def main_usage(self,args):
@@ -33,6 +43,18 @@ class argparse_operator:
         print("python3 main.py update")
         obj = operation.UpdateConsoleAndServer()
         obj.main()
+
+    def arm_operation(self,args):
+        flag = operation.UpdateArmImage()
+        if args.pull:
+            print("python3 main.py arm -pull")
+            flag.main_pull()
+        else:
+            print("python3 main.py arm")
+            flag.main_un_pull()
+
+    def arm_pull_operation(self,args):
+        print("python3 main.py arm -pull")
 
     def parser_init(self):
         args = self.parser.parse_args()
