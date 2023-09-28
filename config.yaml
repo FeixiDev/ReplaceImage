@@ -1,0 +1,9 @@
+node_info:
+   name: kubesphere-test01
+   ip: 10.203.1.137
+   username: root
+   password: password
+LINSTOR Controller IP: 10.203.1.137
+images:
+   server: feixitek/vtel-server:v1.0.1
+   console: feixitek/vtel-console:v1.0.1
